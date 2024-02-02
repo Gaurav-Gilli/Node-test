@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HODIINFO</title>
+  <!-- Add Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+      <!-- Logo -->
+      <a class="navbar-brand" href="#"><img src="images/logo_image.png" alt="" srcset=""></a>
+
+      <!-- Navbar Toggler -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Navbar Items -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="currencyDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              INR
+            </a>
+            <div class="dropdown-menu" aria-labelledby="currencyDropdown">
+              <!-- Add currency dropdown items here -->
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">BTC</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">BUY BTC</a>
+          </li>
+        </ul>
+
+        <!-- Timer -->
+        <div class="timer">
+          <span id="timerNumber">60</span>
+          <div class="border-container"></div>
+        </div>
+      
+
+        <!-- Telegram Button -->
+        <a href="#" class="btn btn-primary">Connect Telegram</a>
+
+        <!-- Toggle Button -->
+        <div class="custom-control custom-switch ml-3">
+          <input type="checkbox" class="custom-control-input" id="toggleSwitch">
+          <label class="custom-control-label" for="toggleSwitch">Toggle</label>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="container info-section">
+    <!-- Info Cards -->
+    <div class="info-card">
+      <p class="title">0.49%</p>
+      <p class="sub">5 Mins</p>
+    </div>
+    <div class="info-card">
+      <p class="title">0.68%</p>
+      <p class="sub">1 Hour</p>
+    </div>
+    <div class="info-card best-price">
+      <p class="sub">Best Price to Trade</p>
+      <p class="title main-title">₹ 38,31,415</p>
+      <p class="sub">Average BTC/INR net price including commission</p>
+    </div>
+    <div class="info-card">
+      <p class="title">6.01%</p>
+      <p class="sub">1 Day</p>
+    </div>
+    <div class="info-card">
+      <p class="title">13.68%</p>
+      <p class="sub">7 Days</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Platform</th>
+          <th>Last Traded Price</th>
+          <th>Buy/Sell Price</th>
+          <th>Difference</th>
+          <th>Savings</th>
+        </tr>
+      </thead>
+      <div class="row-styling">
+        <tbody>
+          <!-- Add more rows with dummy data as needed -->
+        </tbody>
+      </div>
+      
+    </table>
+  </div>
+
+  <!-- Add your page content here -->
+
+  <!-- Add Bootstrap JS and Popper.js -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('http://localhost:3000/get-data')
+        .then(response => response.json())
+        .then(data => {
+          const tableBody = document.querySelector('.data-table tbody');
+  
+          data.forEach((row, index) => {
+            const newRow = tableBody.insertRow();
+            newRow.insertCell(0).innerText = index + 1;
+            newRow.insertCell(1).innerText = row.name;
+            newRow.insertCell(2).innerText = "$" + row.last;
+            newRow.insertCell(3).innerText = `$${row.buy}/$${row.sell}`;
+            const buyValue = parseFloat(row.buy);
+            const sellValue = parseFloat(row.sell);
+            const difference = sellValue - buyValue;
+            const percentageDifference = ((sellValue - buyValue) / buyValue) * 100;
+            const savings = difference;
+
+            // Display the difference and savings in the last two cells
+            const differenceCell = newRow.insertCell(4);
+            const savingsCell = newRow.insertCell(5);
+
+            differenceCell.innerText = percentageDifference.toFixed(2) + "%";
+            savingsCell.innerText = savings.toFixed(2);
+
+            // Add styling based on positive/negative values
+            if (difference > 0) {
+              differenceCell.classList.add('green-text', 'upward-arrow');
+              savingsCell.classList.add('green-text', 'upward-arrow');
+            } else if (difference < 0) {
+              differenceCell.classList.add('red-text', 'downward-arrow');
+              savingsCell.classList.add('red-text', 'downward-arrow');
+            }
+          });
+        })
+        .catch(error => console.error(error));
+    });
+    function startTimer() {
+      const timerNumber = document.getElementById('timerNumber');
+      let seconds = 60;
+
+      function updateTimer() {
+        timerNumber.textContent = seconds;
+
+        seconds--;
+
+        if (seconds < 0) {
+          seconds = 60;
+        }
+      }
+
+      setInterval(updateTimer, 1000);
+    }
+
+    document.addEventListener('DOMContentLoaded', startTimer);
+  </script>
+  
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
